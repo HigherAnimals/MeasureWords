@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="4" >
+
+        <TextView
+            android:id="@+id/correctLabel"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5sp"
+            android:text="@string/correct"
+            android:layout_weight="1"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:gravity="right" />
+          
+        <TextView
+            android:id="@+id/correctCount"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5sp"
+            android:layout_weight="1"
+            android:text="0"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/incorrectLabel"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5sp"
+            android:layout_weight="1"
+            android:text="@string/incorrect"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:gravity="right" />
+        
+        <TextView
+            android:id="@+id/incorrectCount"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5sp"
+            android:layout_weight="1"
+            android:text="0"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="0.5"
+        android:gravity="center|center_horizontal"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/hanzi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/hanzi"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="100sp" />
+
+        <TextView
+            android:id="@+id/pinyin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pinyin"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/english"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/english"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" >
+
+            <Button
+                android:id="@+id/button0"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="@string/answer0" />
+
+            <Button
+                android:id="@+id/button1"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="@string/answer1" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" >
+
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="@string/answer2"  />
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="@string/answer3" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

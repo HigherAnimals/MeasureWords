@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, MeasureWordsActivity!</string>
+    <string name="app_name">MeasureWords</string>
+    <string name="correct">Correct</string>
+    <string name="incorrect">Incorrect</string>
+
+</resources>

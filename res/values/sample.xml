@@ -1,0 +1,10 @@
+
+    <resources>
+        <string name="hanzi">猫</string>
+        <string name="pinyin">māo</string>
+        <string name="english">cat</string>
+        <string name="answer0">位</string>
+        <string name="answer1">只</string>
+        <string name="answer2">顶</string>
+        <string name="answer3">间</string>
+    </resources>
