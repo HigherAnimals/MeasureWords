@@ -2,11 +2,13 @@ package com.higheranimals.measurewords;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 public class MeasureWordsActivity extends Activity {
+    private static final String TAG = "MeasureWordsActivity";
     private int expectedAnswer = -1;
     private int correctCount = 0;
     private int incorrectCount = 0;
@@ -15,6 +17,7 @@ public class MeasureWordsActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v(TAG, "constructor");
         setContentView(R.layout.main);
         setListeners();
         composeQuestion();
@@ -72,5 +75,22 @@ public class MeasureWordsActivity extends Activity {
         public void onClick(View v) {
             MeasureWordsActivity.this.handleAnswer(this.value);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putInt("correctCount", this.correctCount);
+        savedInstanceState.putInt("incorrectCount", this.incorrectCount);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        correctCount = savedInstanceState.getInt("correctCount");
+        incorrectCount = savedInstanceState.getInt("incorrectCount");
+        setCorrectDisplay(correctCount);
+        setIncorrectDisplay(incorrectCount);
+        Log.v(TAG, "onRestoreInstanceState");
     }
 }
