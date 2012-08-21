@@ -87,10 +87,10 @@ public class MeasureWordsActivity extends Activity {
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+        Log.v(TAG, "onRestoreInstanceState");
         correctCount = savedInstanceState.getInt("correctCount");
         incorrectCount = savedInstanceState.getInt("incorrectCount");
         setCorrectDisplay(correctCount);
         setIncorrectDisplay(incorrectCount);
-        Log.v(TAG, "onRestoreInstanceState");
     }
 }
