@@ -14,3 +14,6 @@ gen/
 
 # local configuration file (sdk path, etc)
 local.properties
+
+# pre-populated database
+assets/initial_db.sqlite3
