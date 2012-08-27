@@ -3,6 +3,8 @@ package com.higheranimals.measurewords;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,14 +22,54 @@ public class MeasureWordsActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.v(TAG, "constructor");
-        setContentView(R.layout.main);
-        try {
-            DbHelper.createDatabaseIfNotExists(this);
-        } catch (IOException e) {
-            Log.v(TAG, e.toString());
+        if (savedInstanceState != null) {
+            correctCount = savedInstanceState.getInt("correctCount");
+            incorrectCount = savedInstanceState.getInt("incorrectCount");
         }
+        if (DbHelper.databaseExists(this)) {
+            MeasureWordsActivity.this.init();
+        } else {
+            setContentView(R.layout.loading);
+            (new AsyncTask<Context, Integer, Boolean>() {
+
+                @Override
+                protected Boolean doInBackground(Context... contexts) {
+                    Log.v(TAG, "doInBackground");
+                    try {
+                        DbHelper.createDatabaseIfNotExists(contexts[0]);
+                    } catch (IOException e) {
+                        Log.v(TAG, e.toString());
+                        return false;
+                    }
+                    this.publishProgress(100);
+                    return true;
+                }
+
+                @Override
+                protected void onProgressUpdate(Integer... integers) {
+                    Log.v(TAG, "onProgressUpdate: " + integers[0]);
+                }
+
+                @Override
+                protected void onPostExecute(Boolean success) {
+                    Log.v(TAG, "onPostExecute");
+                    if (success) {
+                        MeasureWordsActivity.this.init();
+                    } else {
+                        // TODO add error announcement
+                        MeasureWordsActivity.this.finish();
+                    }
+                }
+            }).execute(this);
+        }
+    }
+
+    private void init() {
+        this.setContentView(R.layout.main);
         setListeners();
         composeQuestion();
+        setCorrectDisplay(correctCount);
+        setIncorrectDisplay(incorrectCount);
     }
 
     private void setListeners() {
@@ -91,13 +133,4 @@ public class MeasureWordsActivity extends Activity {
         savedInstanceState.putInt("incorrectCount", this.incorrectCount);
     }
 
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        Log.v(TAG, "onRestoreInstanceState");
-        correctCount = savedInstanceState.getInt("correctCount");
-        incorrectCount = savedInstanceState.getInt("incorrectCount");
-        setCorrectDisplay(correctCount);
-        setIncorrectDisplay(incorrectCount);
-    }
 }

@@ -18,8 +18,6 @@ public class DbHelper extends SQLiteOpenHelper {
     static private String DB_NAME = "measure_words.sqlite3";
     static final int DB_VERSION = 1;
 
-    private final Context context;
-
     // DB constants
     static final String NOUN_TABLE = "nouns";
     static final String NOUN_ID = "_id";
@@ -39,6 +37,11 @@ public class DbHelper extends SQLiteOpenHelper {
     static final String JOIN_MW_ID = "measure_words_id";
     static final String JOIN_CORRECT = "correct";
     static final String JOIN_INCORRECT = "incorrect";
+
+    public static boolean databaseExists(Context context) {
+        return (new File(DB_PATH).exists())
+                && (new File(DB_PATH + DB_NAME).exists());
+    }
 
     public static void createDatabaseIfNotExists(Context context)
             throws IOException {
@@ -75,7 +78,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public DbHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
-        this.context = context;
         Log.v(TAG, "constructor");
     }
 
