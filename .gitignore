@@ -16,4 +16,4 @@ gen/
 local.properties
 
 # pre-populated database
-assets/initial_db.sqlite3
+assets/measure_words.sqlite3

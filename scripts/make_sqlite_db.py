@@ -27,20 +27,24 @@ class Join:
   INCORRECT = "incorrect"
 
 # Create DB
-FILENAME = 'assets/initial_db.sqlite3'
+FILENAME = 'assets/measure_words.sqlite3'
 
 if os.path.exists(FILENAME):
   os.unlink(FILENAME)
 con = sqlite3.connect(FILENAME)
 cur = con.cursor()
 
-data = 'CREATE TABLE "android_metadata" ("locale" TEXT DEFAULT "en_US");'
-print data
-cur.execute(data)
+USER_VERSION = 1
+qry = 'PRAGMA user_version = %s;' % USER_VERSION
+cur.execute(qry)
 
-data = 'INSERT INTO "android_metadata" VALUES ("en_US");'
-print data
-cur.execute(data)
+qry = 'CREATE TABLE "android_metadata" ("locale" TEXT DEFAULT "en_US");'
+print qry
+cur.execute(qry)
+
+qry = 'INSERT INTO "android_metadata" VALUES ("en_US");'
+print qry
+cur.execute(qry)
 
 qry = ('CREATE TABLE "%s" ("%s" INTEGER PRIMARY KEY AUTOINCREMENT, "%s" TEXT, "%s" TEXT, "%s" TEXT);' % (
   Noun.TABLE, Noun.ID, Noun.HANZI, Noun.PINYIN, Noun.ENGLISH

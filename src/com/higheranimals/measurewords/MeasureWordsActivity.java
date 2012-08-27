@@ -1,5 +1,7 @@
 package com.higheranimals.measurewords;
 
+import java.io.IOException;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +21,11 @@ public class MeasureWordsActivity extends Activity {
         super.onCreate(savedInstanceState);
         Log.v(TAG, "constructor");
         setContentView(R.layout.main);
+        try {
+            DbHelper.createDatabaseIfNotExists(this);
+        } catch (IOException e) {
+            Log.v(TAG, e.toString());
+        }
         setListeners();
         composeQuestion();
     }
