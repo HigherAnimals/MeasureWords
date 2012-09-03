@@ -1,8 +1,6 @@
 package com.higheranimals.measurewords;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -24,46 +22,22 @@ public class QuestionProvider extends ContentProvider {
     private DbHelper dbHelper;
 
     interface Field {
-        String NOUN_ID = "noun_id";
-        String NOUN_HANZI = "noun_hanzi";
-        String NOUN_PINYIN = "noun_pinyin";
-        String NOUN_ENGLISH = "noun_english";
-        String MEASURE_WORD_ID = "measure_word_id";
-        String MEASURE_WORD_HANZI = "measure_word_hanzi";
-        String MEASURE_WORD_PINYIN = "measure_word_pinyin";
-        String MEASURE_WORD_ENGLISH = "measure_word_english";
-        String CORRECT = "question_correct";
-        String INCORRECT = "question_incorrect";
-        String QUESTION_ID = "question_id";
+        String NOUN_ID = "_n_id";
+        String NOUN_HANZI = "n_hanzi";
+        String NOUN_PINYIN = "n_pinyin";
+        String NOUN_ENGLISH = "n_english";
+        String MEASURE_WORD_ID = "_mw_id";
+        String MEASURE_WORD_HANZI = "mw_hanzi";
+        String MEASURE_WORD_PINYIN = "mw_pinyin";
+        String MEASURE_WORD_ENGLISH = "mw_english";
+        String CORRECT = "nmw_correct";
+        String INCORRECT = "nmw_incorrect";
+        String QUESTION_ID = "_nmw_id";
     }
 
     interface UriParameter {
         String LIMIT = "limit";
         String DISTINCT = "distinct";
-    }
-
-    private static Map<String, String> columnMap;
-    static {
-        Map<String, String> tmpMap = new HashMap<String, String>();
-        tmpMap.put(Field.NOUN_ID, "nouns._id AS " + Field.NOUN_ID);
-        tmpMap.put(Field.NOUN_HANZI, "nouns.hanzi AS " + Field.NOUN_HANZI);
-        tmpMap.put(Field.NOUN_PINYIN, "nouns.pinyin AS " + Field.NOUN_PINYIN);
-        tmpMap.put(Field.NOUN_ENGLISH, "nouns.english AS " + Field.NOUN_ENGLISH);
-        tmpMap.put(Field.MEASURE_WORD_ID, "measure_words._id AS "
-                + Field.MEASURE_WORD_ID);
-        tmpMap.put(Field.MEASURE_WORD_HANZI, "measure_words.hanzi AS "
-                + Field.MEASURE_WORD_HANZI);
-        tmpMap.put(Field.MEASURE_WORD_PINYIN, "measure_words.pinyin AS "
-                + Field.MEASURE_WORD_PINYIN);
-        tmpMap.put(Field.MEASURE_WORD_ENGLISH, "measure_words.english AS "
-                + Field.MEASURE_WORD_ENGLISH);
-        tmpMap.put(Field.QUESTION_ID, "nouns_measure_words._id AS "
-                + Field.QUESTION_ID);
-        tmpMap.put(Field.CORRECT, "nouns_measure_words.correct AS "
-                + Field.CORRECT);
-        tmpMap.put(Field.INCORRECT, "nouns_measure_words.incorrect "
-                + Field.INCORRECT);
-        columnMap = tmpMap;
     }
 
     public static boolean isReady(Context context) {
@@ -113,8 +87,10 @@ public class QuestionProvider extends ContentProvider {
 
     private static SQLiteQueryBuilder createQueryBuilder() {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        qb.setTables("nouns LEFT OUTER JOIN nouns_measure_words ON nouns._id = nouns_measure_words.noun_id INNER JOIN measure_words on nouns_measure_words.measure_word_id = measure_words._id");
-        qb.setProjectionMap(columnMap);
+        qb.setTables("nouns LEFT OUTER JOIN nouns_measure_words ON "
+                + Field.NOUN_ID
+                + " = nouns_measure_words.nmw_noun_id INNER JOIN measure_words on nouns_measure_words.nmw_measure_word_id = "
+                + Field.MEASURE_WORD_ID);
         return qb;
     }
 

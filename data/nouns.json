@@ -1,32 +1,32 @@
 [
   {
-    "hanzi": "帽子",
-    "pinyin": "màozi",
-    "english": "hat"
+    "n_hanzi": "帽子",
+    "n_pinyin": "màozi",
+    "n_english": "hat"
   },
   {
-    "hanzi": "手",
-    "pinyin": "shǒu",
-    "english": "hand"
+    "n_hanzi": "手",
+    "n_pinyin": "shǒu",
+    "n_english": "hand"
   },
   {
-    "hanzi": "猫",
-    "pinyin": "māo",
-    "english": "cat"
+    "n_hanzi": "猫",
+    "n_pinyin": "māo",
+    "n_english": "cat"
   },
   {
-    "hanzi": "老师",
-    "pinyin": "lǎoshī",
-    "english": "teacher"
+    "n_hanzi": "老师",
+    "n_pinyin": "lǎoshī",
+    "n_english": "teacher"
   },
   {
-    "hanzi": "糖",
-    "pinyin": "táng",
-    "english": "sugar"
+    "n_hanzi": "糖",
+    "n_pinyin": "táng",
+    "n_english": "sugar"
   },
   {
-    "hanzi": "书",
-    "pinyin": "shū",
-    "english": "book"
+    "n_hanzi": "书",
+    "n_pinyin": "shū",
+    "n_english": "book"
   }
 ]

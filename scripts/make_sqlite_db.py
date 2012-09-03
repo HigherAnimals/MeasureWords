@@ -8,23 +8,23 @@ import sys
 # Enums
 class Noun:
   TABLE = "nouns"
-  ID = "_id"
-  HANZI = "hanzi"
-  PINYIN = "pinyin"
-  ENGLISH = "english"
+  ID = "_n_id"
+  HANZI = "n_hanzi"
+  PINYIN = "n_pinyin"
+  ENGLISH = "n_english"
 class MeasureWord:
   TABLE = "measure_words"
-  ID = "_id"
-  HANZI = "hanzi"
-  PINYIN = "pinyin"
-  ENGLISH = "english"
+  ID = "_mw_id"
+  HANZI = "mw_hanzi"
+  PINYIN = "mw_pinyin"
+  ENGLISH = "mw_english"
 class Join:
   TABLE = "nouns_measure_words"
-  ID = "_id"
-  NOUN_ID = "noun_id"
-  MEASURE_WORD_ID = "measure_word_id"
-  CORRECT = "correct"
-  INCORRECT = "incorrect"
+  ID = "_nmw_id"
+  NOUN_ID = "nmw_noun_id"
+  MEASURE_WORD_ID = "nmw_measure_word_id"
+  CORRECT = "nmw_correct"
+  INCORRECT = "nmw_incorrect"
 
 # Create DB
 FILENAME = 'assets/measure_words.sqlite3'
@@ -107,9 +107,11 @@ with open('data/nouns_measure_words.json') as f:
     ))
     measure_word_id = cur.fetchone()[0]
     # Insert
-    cur.execute('INSERT INTO "%s" ("%s", "%s") VALUES ("%s", "%s");' %(
+    qry = 'INSERT INTO "%s" ("%s", "%s") VALUES ("%s", "%s");' %(
       Join.TABLE, Join.NOUN_ID, Join.MEASURE_WORD_ID, noun_id, measure_word_id
-    ))
+    )
+    print qry
+    cur.execute(qry)
     con.commit()
     
 con.commit()
