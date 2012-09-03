@@ -8,7 +8,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,8 +21,9 @@ public class MeasureWordsActivity extends Activity {
     private int expectedAnswer = -1;
     private int correctCount = 0;
     private int incorrectCount = 0;
-    private SQLiteDatabase db = null;
     Cursor cur;
+
+    private final int QUESTION_COUNT = 5;
 
     // Buttons
     private Button[] buttons;
@@ -37,23 +38,22 @@ public class MeasureWordsActivity extends Activity {
             incorrectCount = savedInstanceState.getInt("incorrectCount");
         }
         if (DbHelper.databaseExists(this)) {
-            init(new DbHelper(this).getWritableDatabase());
+            init();
         } else {
             setContentView(R.layout.loading);
-            (new AsyncTask<Context, Integer, SQLiteDatabase>() {
+            (new AsyncTask<Context, Integer, Boolean>() {
 
                 @Override
-                protected SQLiteDatabase doInBackground(Context... contexts) {
+                protected Boolean doInBackground(Context... contexts) {
                     Log.v(TAG, "doInBackground");
                     try {
-                        DbHelper.createDatabaseIfNotExists(contexts[0]);
+                        QuestionProvider.initializeDataIfNecessary(contexts[0]);
                     } catch (IOException e) {
                         Log.v(TAG, e.toString());
-                        return null;
+                        return false;
                     }
                     this.publishProgress(100);
-                    return new DbHelper(MeasureWordsActivity.this)
-                            .getWritableDatabase();
+                    return true;
                 }
 
                 @Override
@@ -62,10 +62,10 @@ public class MeasureWordsActivity extends Activity {
                 }
 
                 @Override
-                protected void onPostExecute(SQLiteDatabase db) {
+                protected void onPostExecute(Boolean success) {
                     Log.v(TAG, "onPostExecute");
-                    if (db != null) {
-                        MeasureWordsActivity.this.init(db);
+                    if (success) {
+                        MeasureWordsActivity.this.init();
                     } else {
                         // TODO add error announcement
                         MeasureWordsActivity.this.finish();
@@ -75,13 +75,25 @@ public class MeasureWordsActivity extends Activity {
         }
     }
 
-    private void init(SQLiteDatabase db) {
+    private void init() {
         this.setContentView(R.layout.main);
-        this.db = db;
-        // TODO clean this up;
-        cur = db.rawQuery(
-                "SELECT nouns._id AS noun_id, nouns.hanzi AS noun_hanzi, nouns.pinyin AS noun_pinyin, nouns.english AS noun_english, measure_words.hanzi AS measure_word_hanzi, measure_words.pinyin AS measure_word_pinyin, measure_words.english AS measure_word_english FROM nouns LEFT OUTER JOIN nouns_measure_words ON nouns._id = nouns_measure_words.noun_id INNER JOIN measure_words on nouns_measure_words.measure_word_id = measure_words._id ORDER BY RANDOM();",
-                null);
+        Uri uri = QuestionProvider.CONTENT_URI
+                .buildUpon()
+                .appendQueryParameter(QuestionProvider.UriParameter.LIMIT,
+                        Integer.toString(QUESTION_COUNT)).build();
+        // TODO pare this down a bit -- probably don't need all
+        String[] projection = new String[] { QuestionProvider.Field.NOUN_ID,
+                QuestionProvider.Field.NOUN_HANZI,
+                QuestionProvider.Field.NOUN_PINYIN,
+                QuestionProvider.Field.NOUN_ENGLISH,
+                QuestionProvider.Field.MEASURE_WORD_ID,
+                QuestionProvider.Field.MEASURE_WORD_HANZI,
+                QuestionProvider.Field.MEASURE_WORD_PINYIN,
+                QuestionProvider.Field.MEASURE_WORD_ENGLISH,
+                QuestionProvider.Field.CORRECT,
+                QuestionProvider.Field.INCORRECT };
+        cur = getContentResolver().query(uri, projection, null, null,
+                "RANDOM()");
         this.startManagingCursor(cur);
         assignButtons();
         if (expectedAnswer == -1) {
@@ -106,39 +118,51 @@ public class MeasureWordsActivity extends Activity {
     private void composeQuestion() {
         Log.v(TAG, "composeQuestion");
         if (cur.moveToNext()) {
-            int noun_id = cur.getInt(cur.getColumnIndex("noun_id"));
-            String noun_hanzi = cur.getString(cur.getColumnIndex("noun_hanzi"));
+            int noun_id = cur.getInt(cur
+                    .getColumnIndex(QuestionProvider.Field.NOUN_ID));
+            String noun_hanzi = cur.getString(cur
+                    .getColumnIndex(QuestionProvider.Field.NOUN_HANZI));
             ((TextView) this.findViewById(R.id.hanzi)).setText(noun_hanzi);
             String noun_pinyin = cur.getString(cur
-                    .getColumnIndex("noun_pinyin"));
+                    .getColumnIndex(QuestionProvider.Field.NOUN_PINYIN));
             ((TextView) this.findViewById(R.id.pinyin)).setText(noun_pinyin);
             String noun_english = cur.getString(cur
-                    .getColumnIndex("noun_english"));
+                    .getColumnIndex(QuestionProvider.Field.NOUN_ENGLISH));
             ((TextView) this.findViewById(R.id.english)).setText(noun_english);
+            int measure_word_id = cur.getInt(cur
+                    .getColumnIndex(QuestionProvider.Field.MEASURE_WORD_ID));
             String measure_word_hanzi = cur.getString(cur
-                    .getColumnIndex("measure_word_hanzi"));
+                    .getColumnIndex(QuestionProvider.Field.MEASURE_WORD_HANZI));
             Log.v(TAG, "noun pinyin: " + noun_pinyin + "; noun_english: "
                     + noun_english);
             // Get wrong answers
-            Cursor optionCursor = db
-                    .rawQuery(
-                            "SELECT DISTINCT measure_words.hanzi AS measure_word_hanzi FROM measure_words WHERE measure_words._id NOT IN (SELECT measure_words._id FROM measure_words INNER JOIN nouns_measure_words ON measure_words._id = nouns_measure_words.measure_word_id INNER JOIN nouns ON nouns._id = nouns_measure_words.noun_id WHERE nouns._id = "
-                                    + noun_id + ") ORDER BY RANDOM() LIMIT 3;",
-                            null);
+            Uri uri = QuestionProvider.CONTENT_URI
+                    .buildUpon()
+                    .appendQueryParameter(
+                            QuestionProvider.UriParameter.DISTINCT, "1")
+                    .appendQueryParameter(QuestionProvider.UriParameter.LIMIT,
+                            Integer.toString(3)).build();
+            Cursor optionCursor = getContentResolver().query(
+                    uri,
+                    new String[] { QuestionProvider.Field.MEASURE_WORD_HANZI },
+                    QuestionProvider.Field.NOUN_ID + " != ? AND "
+                            + QuestionProvider.Field.MEASURE_WORD_ID + " != ?",
+                    new String[] { Integer.toString(noun_id),
+                            Integer.toString(measure_word_id) }, "RANDOM()");
             // Set wrong answers
+            // TODO make the number of options dynamic
             List<Integer> indices = Arrays.asList(0, 1, 2, 3);
             Collections.shuffle(indices);
             int i = 0;
             while (optionCursor.moveToNext()) {
                 String wrong_measure_word_hanzi = optionCursor
                         .getString(optionCursor
-                                .getColumnIndex("measure_word_hanzi"));
+                                .getColumnIndex(QuestionProvider.Field.MEASURE_WORD_HANZI));
                 buttons[indices.get(i++)].setText(wrong_measure_word_hanzi);
             }
             optionCursor.close();
             expectedAnswer = indices.get(i);
             buttons[expectedAnswer].setText(measure_word_hanzi);
-            // TODO actually set up a question.
         } else {
             // TODO compose all questions at once and bundle so rotation does
             // not reset question list.
@@ -189,13 +213,5 @@ public class MeasureWordsActivity extends Activity {
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putInt("correctCount", this.correctCount);
         savedInstanceState.putInt("incorrectCount", this.incorrectCount);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (db != null) {
-            db.close();
-        }
     }
 }
