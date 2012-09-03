@@ -32,8 +32,9 @@ public class QuestionProvider extends ContentProvider {
         String MEASURE_WORD_HANZI = "measure_word_hanzi";
         String MEASURE_WORD_PINYIN = "measure_word_pinyin";
         String MEASURE_WORD_ENGLISH = "measure_word_english";
-        String CORRECT = "nouns_measure_word_correct";
-        String INCORRECT = "nouns_measure_word_incorrect";
+        String CORRECT = "question_correct";
+        String INCORRECT = "question_incorrect";
+        String QUESTION_ID = "question_id";
     }
 
     interface UriParameter {
@@ -56,6 +57,8 @@ public class QuestionProvider extends ContentProvider {
                 + Field.MEASURE_WORD_PINYIN);
         tmpMap.put(Field.MEASURE_WORD_ENGLISH, "measure_words.english AS "
                 + Field.MEASURE_WORD_ENGLISH);
+        tmpMap.put(Field.QUESTION_ID, "nouns_measure_words._id AS "
+                + Field.QUESTION_ID);
         tmpMap.put(Field.CORRECT, "nouns_measure_words.correct AS "
                 + Field.CORRECT);
         tmpMap.put(Field.INCORRECT, "nouns_measure_words.incorrect "
@@ -119,20 +122,27 @@ public class QuestionProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection,
             String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = createQueryBuilder();
-        if (uri.getQueryParameter(UriParameter.DISTINCT) != null) {
-            qb.setDistinct(true);
-        }
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor c = qb.query(db, projection, selection, selectionArgs, null,
-                null, sortOrder, uri.getQueryParameter(UriParameter.LIMIT));
-        // db.close();
-        return c;
+        int id = getId(uri);
+        if (id < 0) {
+            if (uri.getQueryParameter(UriParameter.DISTINCT) != null) {
+                qb.setDistinct(true);
+            }
+            return qb.query(db, projection, selection, selectionArgs, null,
+                    null, sortOrder, uri.getQueryParameter(UriParameter.LIMIT));
+        } else {
+            return qb.query(db, projection, Field.QUESTION_ID + " = " + id,
+                    null, null, null, null);
+        }
     }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection,
             String[] selectionArgs) {
-        // TODO Auto-generated method stub
+        /*
+         * SQLiteDatabase db = dbHelper.getReadableDatabase(); int id =
+         * getId(uri);
+         */
         return 0;
     }
 
