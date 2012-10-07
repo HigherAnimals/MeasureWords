@@ -20,23 +20,23 @@ public class DbHelper extends SQLiteOpenHelper {
 
     // DB constants
     static final String NOUN_TABLE = "nouns";
-    static final String NOUN_ID = "_id";
-    static final String NOUN_HANZI = "hanzi";
-    static final String NOUN_PINYIN = "pinyin";
-    static final String NOUN_ENGLISH = "english";
+    static final String NOUN_ID = "_n_id";
+    static final String NOUN_HANZI = "n_hanzi";
+    static final String NOUN_PINYIN = "n_pinyin";
+    static final String NOUN_ENGLISH = "n_english";
 
     static final String MEASURE_WORD_TABLE = "measure_words";
-    static final String MEASURE_WORD_ID = "_id";
-    static final String MEASURE_WORD_HANZI = "hanzi";
-    static final String MEASURE_WORD_PINYIN = "pinyin";
-    static final String MEASURE_WORD_ENGLISH = "english";
+    static final String MEASURE_WORD_ID = "_mw_id";
+    static final String MEASURE_WORD_HANZI = "mw_hanzi";
+    static final String MEASURE_WORD_PINYIN = "mw_pinyin";
+    static final String MEASURE_WORD_ENGLISH = "mw_english";
 
-    static final String JOIN_TABLE = "words_measure_words";
-    static final String JOIN_ID = "_id";
-    static final String JOIN_WORDS_ID = "words_id";
-    static final String JOIN_MW_ID = "measure_words_id";
-    static final String JOIN_CORRECT = "correct";
-    static final String JOIN_INCORRECT = "incorrect";
+    static final String JOIN_TABLE = "nouns_measure_words";
+    static final String JOIN_ID = "_nmw_id";
+    static final String JOIN_NOUNS_ID = "nmw_noun_id";
+    static final String JOIN_MW_ID = "nmw_measure_word_id";
+    static final String JOIN_CORRECT = "nmw_correct";
+    static final String JOIN_INCORRECT = "nmw_incorrect";
 
     public static boolean databaseExists(Context context) {
         return (new File(DB_PATH).exists())

@@ -107,7 +107,9 @@ public class MeasureWordsActivity extends Activity {
                         QuestionProvider.Field.MEASURE_WORD_HANZI,
                         QuestionProvider.Field.MEASURE_WORD_PINYIN,
                         QuestionProvider.Field.MEASURE_WORD_ENGLISH,
-                        QuestionProvider.Field.QUESTION_ID };
+                        QuestionProvider.Field.QUESTION_ID,
+                        QuestionProvider.Field.CORRECT,
+                        QuestionProvider.Field.INCORRECT };
                 ContentResolver contentResolver = getContentResolver();
                 Cursor cur = contentResolver.query(uri, projection, null, null,
                         QuestionProvider.Ordering.HARDEST);
@@ -246,13 +248,18 @@ public class MeasureWordsActivity extends Activity {
         return questionList.get(questionIndex);
     }
 
-    private void handleAnswer(int i) {
-        Log.v(TAG, "handleAnswer");
+    private void handleChoice(int i) {
+        Log.v(TAG, "handleChoice");
+        String column;
         if (getCurrentQuestion().isCorrectChoice(i)) {
             setCorrectDisplay(++this.correctCount);
+            column = QuestionProvider.Field.CORRECT;
         } else {
+            column = QuestionProvider.Field.INCORRECT;
             setIncorrectDisplay(++this.incorrectCount);
         }
+        (new Thread(new Incrementer(getContentResolver(), getCurrentQuestion()
+                .getId(), column))).start();
         ++questionIndex;
         composeQuestion();
     }
@@ -269,6 +276,15 @@ public class MeasureWordsActivity extends Activity {
                 .toString(count));
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putInt("correctCount", correctCount);
+        savedInstanceState.putInt("incorrectCount", incorrectCount);
+        savedInstanceState.putInt("questionIndex", questionIndex);
+        savedInstanceState.putParcelableArrayList("questionList", questionList);
+    }
+
     private class ValueClickListener implements View.OnClickListener {
         private final int value;
 
@@ -278,16 +294,34 @@ public class MeasureWordsActivity extends Activity {
 
         @Override
         public void onClick(View v) {
-            MeasureWordsActivity.this.handleAnswer(this.value);
+            MeasureWordsActivity.this.handleChoice(this.value);
         }
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putInt("correctCount", correctCount);
-        savedInstanceState.putInt("incorrectCount", incorrectCount);
-        savedInstanceState.putInt("questionIndex", questionIndex);
-        savedInstanceState.putParcelableArrayList("questionList", questionList);
+    private static class Incrementer implements Runnable {
+
+        private final ContentResolver contentResolver;
+        private final String column;
+        private final int id;
+
+        public Incrementer(ContentResolver contentResolver, int id,
+                String column) {
+            this.contentResolver = contentResolver;
+            this.id = id;
+            this.column = column;
+        }
+
+        @Override
+        public void run() {
+            Uri uri = QuestionProvider.CONTENT_URI
+                    .buildUpon()
+                    .appendPath(Integer.toString(id))
+                    .appendQueryParameter(
+                            QuestionProvider.UriParameter.INCREMENT, column)
+                    .build();
+            contentResolver.update(uri, null, null, null);
+            // Add error handling?
+        }
+
     }
 }

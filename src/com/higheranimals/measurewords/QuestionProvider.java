@@ -44,6 +44,7 @@ public class QuestionProvider extends ContentProvider {
     interface UriParameter {
         String LIMIT = "limit";
         String DISTINCT = "distinct";
+        String INCREMENT = "increment";
     }
 
     public static boolean isReady(Context context) {
@@ -112,20 +113,31 @@ public class QuestionProvider extends ContentProvider {
             }
             return qb.query(db, projection, selection, selectionArgs, null,
                     null, sortOrder, uri.getQueryParameter(UriParameter.LIMIT));
-        } else {
-            return qb.query(db, projection, Field.QUESTION_ID + " = " + id,
-                    null, null, null, null);
         }
+        return qb.query(db, projection, Field.QUESTION_ID + " = ?",
+                new String[] { Integer.toString(id) }, null, null, null);
+
     }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection,
             String[] selectionArgs) {
-        /*
-         * SQLiteDatabase db = dbHelper.getReadableDatabase(); int id =
-         * getId(uri);
-         */
-        return 0;
+        // Only works for the join table... sad.
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int id = getId(uri);
+        if (id < 0) {
+            return db.update("nouns_measure_words", values, "_nmw_id = ?",
+                    new String[] { Integer.toString(id) });
+        }
+        String increment = uri.getQueryParameter(UriParameter.INCREMENT);
+        if (increment != null
+                && (increment.equals(Field.CORRECT) || increment
+                        .equals(Field.INCORRECT))) {
+            db.execSQL("UPDATE nouns_measure_words SET " + increment + " = ("
+                    + increment + " + 1) WHERE _nmw_id = " + id);
+            return 1; // Not necessarily correct -- could be 0!
+        }
+        return db.update("nouns_measure_words", values, selection,
+                selectionArgs);
     }
-
 }

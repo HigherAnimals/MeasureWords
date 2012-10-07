@@ -52,6 +52,10 @@ final public class Question implements Parcelable {
         return nounEnglish;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public static final Parcelable.Creator<Question> CREATOR = new Parcelable.Creator<Question>() {
 
         @Override
