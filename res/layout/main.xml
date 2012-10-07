@@ -81,12 +81,12 @@
             android:textAppearance="?android:attr/textAppearanceLarge" />
     </LinearLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/answers"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="2"
         android:gravity="center">
-    </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>

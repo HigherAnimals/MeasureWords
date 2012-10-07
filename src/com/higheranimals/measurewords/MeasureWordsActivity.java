@@ -14,7 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MeasureWordsActivity extends Activity {
@@ -28,7 +28,7 @@ public class MeasureWordsActivity extends Activity {
     private final int ANSWERS_COUNT = 4;
 
     // Buttons
-    private RelativeLayout row;
+    private LinearLayout row;
 
     /** Called when the activity is first created. */
     @Override
@@ -197,7 +197,7 @@ public class MeasureWordsActivity extends Activity {
         Log.v(TAG, "init");
         setContentView(R.layout.main);
         // Find rows.
-        row = (RelativeLayout) findViewById(R.id.answers);
+        row = (LinearLayout) findViewById(R.id.answers);
         setCorrectDisplay(correctCount);
         setIncorrectDisplay(incorrectCount);
         composeQuestion();
@@ -218,6 +218,11 @@ public class MeasureWordsActivity extends Activity {
         // Clear row.
         row.removeAllViews();
 
+        // Generate layout params. (Should probably go somewhere else...)
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.FILL_PARENT,
+                LinearLayout.LayoutParams.FILL_PARENT, 1.0f);
+
         // Populate rows.
         for (int i = 0; i < answerList.size(); ++i) {
 
@@ -232,26 +237,8 @@ public class MeasureWordsActivity extends Activity {
                     .findViewById(R.id.mwPinyin);
             pinyinView.setText(answer.getPinyin());
 
-            // Set LayoutParams.
-            int id = 1 + i; // Cannot be 0.
-            answerView.setId(id);
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.WRAP_CONTENT,
-                    RelativeLayout.LayoutParams.FILL_PARENT);
-            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-            if (i == 0) {
-                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-            } else {
-                layoutParams.addRule(RelativeLayout.RIGHT_OF, id - 1);
-            }
-            if (i == answerList.size()) {
-                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            }
-            answerView.setLayoutParams(layoutParams);
-
             // Add to row.
-            row.addView(answerView);
+            row.addView(answerView, layoutParams);
         }
     }
 
