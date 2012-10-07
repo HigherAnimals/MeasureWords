@@ -93,7 +93,11 @@ final public class Question implements Parcelable {
         dest.writeString(nounPinyin);
         dest.writeString(nounEnglish);
         dest.writeInt(correctIndex);
-        dest.writeParcelableArray((Parcelable[]) answers.toArray(), 0);
+        Parcelable[] parcelables = new Parcelable[answers.size()];
+        for (int i = 0; i < answers.size(); ++i) {
+            parcelables[i] = answers.get(i);
+        }
+        dest.writeParcelableArray(parcelables, 0);
     }
 
     public Answer getCorrectAnswer() {
