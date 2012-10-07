@@ -1,0 +1,28 @@
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:clickable="true" >
+        <TextView
+            android:id="@+id/mwHanzi"
+            android:textSize="30dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="herp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/mwPinyin"
+            android:textSize="20dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="derp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:gravity="center" />
+
+    </LinearLayout>

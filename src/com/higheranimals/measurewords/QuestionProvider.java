@@ -35,6 +35,12 @@ public class QuestionProvider extends ContentProvider {
         String QUESTION_ID = "_nmw_id";
     }
 
+    interface Ordering {
+        String RANDOM = "RANDOM()";
+        String HARDEST = Field.INCORRECT + " - " + Field.CORRECT
+                + " DESC, RANDOM()";
+    }
+
     interface UriParameter {
         String LIMIT = "limit";
         String DISTINCT = "distinct";

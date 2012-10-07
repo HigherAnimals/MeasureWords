@@ -83,57 +83,21 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/row0"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"
-        android:orientation="vertical" >
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1" >
-
-            <Button
-                android:id="@+id/button0"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:textSize="30sp"
-                android:text="@string/answer0" />
-
-            <Button
-                android:id="@+id/button1"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:textSize="30sp"
-                android:text="@string/answer1" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1" >
-
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:textSize="30sp"
-                android:text="@string/answer2"  />
-
-            <Button
-                android:id="@+id/button3"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:textSize="30sp"
-                android:text="@string/answer3" />
-
-        </LinearLayout>
-
+        android:gravity="center"
+        android:orientation="horizontal" >
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/row1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:layout_weight="1"
+        android:orientation="horizontal" >
     </LinearLayout>
 
 </LinearLayout>
