@@ -14,7 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class MeasureWordsActivity extends Activity {
@@ -28,14 +28,13 @@ public class MeasureWordsActivity extends Activity {
     private final int ANSWERS_COUNT = 4;
 
     // Buttons
-    private LinearLayout[] rows;
+    private RelativeLayout row;
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.v(TAG, "constructor");
-        rows = new LinearLayout[2];
         if (savedInstanceState != null) { // ready
             correctCount = savedInstanceState.getInt("correctCount");
             incorrectCount = savedInstanceState.getInt("incorrectCount");
@@ -198,8 +197,7 @@ public class MeasureWordsActivity extends Activity {
         Log.v(TAG, "init");
         setContentView(R.layout.main);
         // Find rows.
-        rows[0] = (LinearLayout) findViewById(R.id.row0);
-        rows[1] = (LinearLayout) findViewById(R.id.row1);
+        row = (RelativeLayout) findViewById(R.id.answers);
         setCorrectDisplay(correctCount);
         setIncorrectDisplay(incorrectCount);
         composeQuestion();
@@ -216,20 +214,44 @@ public class MeasureWordsActivity extends Activity {
                 .getNounEnglish());
         List<Answer> answerList = question.getAnswers();
         LayoutInflater layoutInflater = getLayoutInflater();
-        // Clear rows.
-        for (int i = 0; i < rows.length; ++i) {
-            rows[i].removeAllViews();
-        }
+
+        // Clear row.
+        row.removeAllViews();
+
         // Populate rows.
         for (int i = 0; i < answerList.size(); ++i) {
+
+            // Populate data.
             Answer answer = answerList.get(i);
-            View choice = layoutInflater.inflate(R.layout.answer, null);
-            choice.setOnClickListener(new ValueClickListener(i));
-            TextView hanziView = (TextView) choice.findViewById(R.id.mwHanzi);
+            View answerView = layoutInflater.inflate(R.layout.answer, null);
+            answerView.setOnClickListener(new ValueClickListener(i));
+            TextView hanziView = (TextView) answerView
+                    .findViewById(R.id.mwHanzi);
             hanziView.setText(answer.getHanzi());
-            TextView pinyinView = (TextView) choice.findViewById(R.id.mwPinyin);
+            TextView pinyinView = (TextView) answerView
+                    .findViewById(R.id.mwPinyin);
             pinyinView.setText(answer.getPinyin());
-            rows[i % 2].addView(choice);
+
+            // Set LayoutParams.
+            int id = 1 + i; // Cannot be 0.
+            answerView.setId(id);
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.FILL_PARENT);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            if (i == 0) {
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            } else {
+                layoutParams.addRule(RelativeLayout.RIGHT_OF, id - 1);
+            }
+            if (i == answerList.size()) {
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            }
+            answerView.setLayoutParams(layoutParams);
+
+            // Add to row.
+            row.addView(answerView);
         }
     }
 
