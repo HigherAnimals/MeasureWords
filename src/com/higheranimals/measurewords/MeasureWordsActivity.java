@@ -226,7 +226,9 @@ public class MeasureWordsActivity extends Activity {
         // Generate layout params. (Should probably go somewhere else...)
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.FILL_PARENT,
-                LinearLayout.LayoutParams.FILL_PARENT, 1.0f);
+                LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+        int dp = (int) (5 * getResources().getDisplayMetrics().density);
+        layoutParams.setMargins(dp, dp, dp, dp);
 
         // Populate rows.
         for (int i = 0; i < answerList.size(); ++i) {
