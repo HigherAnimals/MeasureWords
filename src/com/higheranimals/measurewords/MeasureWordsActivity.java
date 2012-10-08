@@ -2,6 +2,7 @@ package com.higheranimals.measurewords;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.app.Activity;
@@ -85,6 +86,7 @@ public class MeasureWordsActivity extends Activity {
     }
 
     private void generateQuestions() {
+        Log.v(TAG, "generateQuestions");
         (new AsyncTask<Integer, Integer, ArrayList<Question>>() {
 
             @Override
@@ -179,6 +181,7 @@ public class MeasureWordsActivity extends Activity {
                                     measureWordEnglish), AnswerList));
                 }
                 cur.close();
+                Collections.shuffle(questionList);
                 return questionList;
             }
 
@@ -261,7 +264,11 @@ public class MeasureWordsActivity extends Activity {
         (new Thread(new Incrementer(getContentResolver(), getCurrentQuestion()
                 .getId(), column))).start();
         ++questionIndex;
-        composeQuestion();
+        if (questionIndex < questionList.size()) {
+            composeQuestion();
+        } else {
+            finish();
+        }
     }
 
     private void setCorrectDisplay(int count) {
@@ -322,6 +329,5 @@ public class MeasureWordsActivity extends Activity {
             contentResolver.update(uri, null, null, null);
             // Add error handling?
         }
-
     }
 }
